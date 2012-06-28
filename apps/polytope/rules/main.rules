@@ -1,0 +1,77 @@
+#  Copyright (c) 2012
+#  Julian Pfeifle, Universitat Politecnica de Catalunya
+#  julian.pfeifle@upc.edu
+#
+#  This program is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by the
+#  Free Software Foundation; either version 2, or (at your option) any
+#  later version: http://www.gnu.org/licenses/gpl.txt.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#-------------------------------------------------------------------------------
+
+sub read_triangs($) {
+    my $filename=shift;
+    open(my $infile, "<$filename")
+        or die "can't open input file $filename: $!";
+    my @triangs=();
+    while(<$infile>) {
+        s/T.*://; s/\];//; s/^\{//; s/\}$//; s/\},\{/}\n{/g; tr/,/ /;
+        my @e =( split /\n/, $_ );     
+        push @triangs, \@e;
+    }
+    \@triangs;
+ }
+
+sub read_sets($) {
+    my $filename=shift;
+    open(my $infile, "<$filename")
+        or die "can't open input file $filename: $!";
+    my @sets=();
+    while(<$infile>) {
+        s/^\{//; s/\}$//; 
+        my @e =( split /\n/, $_ );     
+        push @sets, @e; 
+    }
+    return @sets;
+ }
+
+sub read_sets_to_array($) {
+    my @sets = read_sets(shift);
+    my $n = scalar(@sets);
+    my $a = new Array<Set<Int>>($n);
+    foreach my $i (0..$n-1) {
+        $a->[$i] = new Set<Int>(split " ", $sets[$i]);
+    }
+    return $a;
+}
+
+object Polytope {
+
+    property MAXIMAL_SIMPLEX_REPRESENTATIVES: Array<Set<Int>>;
+
+}
+
+sub assemble_sections(@)
+{
+    my @a;
+    my $this = shift;
+    foreach my $step_name (@_) {
+	print $step_name, "\n";
+	my $p = User::load($step_name);
+	push @a, $p->MAXIMAL_SIMPLEX_REPRESENTATIVES;
+    }
+    print join("\n", @a);
+    my $pa=new Polytope($this, "QUOTIENT_SPACE.SIMPLICES"=>@a);
+    return $pa;
+}
+
+
+
+# Local Variables:
+# mode: perl
+# cperl-indent-level:3
+# End:
