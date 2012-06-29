@@ -1,4 +1,6 @@
-polymake-parallel
-=================
+polymake-pmp
+============
 
-A collection of scripts and client programs to parallelize some computations in polymake
+Poor-man's parallelization for polymake.
+
+A collection of scripts and client programs that generate Makefiles to parallelize some computations in polymake. 
