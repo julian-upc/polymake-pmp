@@ -49,6 +49,15 @@ sub read_sets_to_array($) {
     return $a;
 }
 
+sub read_sets_to_set($) {
+    my @sets = read_sets(shift);
+    my $ss = new Set<Set<Int>>;
+    foreach my $s (@sets) {
+	$ss += new Set<Int>(split " ", $s);
+    }
+    return $ss;
+}
+
 object Polytope {
 
     property MAXIMAL_SIMPLEX_REPRESENTATIVES: Array<Set<Int>>;
